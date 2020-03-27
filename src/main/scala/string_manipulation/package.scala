@@ -1,4 +1,6 @@
-def reverse(x: Int): Int = {
+package object string_manipulation {
+
+  def reverse(x: Int): Int = {
 
     def loop(input: Int, acc: Int, power: Int): Int = {
 
@@ -12,5 +14,7 @@ def reverse(x: Int): Int = {
         loop(input / 10, runningTotal.toInt, power-1)
     }
 
-  if(Int.MinValue <= x) 0 else loop(x,0,Math.log10(x.abs).toInt)
+    if(Int.MinValue <= x) 0 else loop(x,0,Math.log10(x.abs).toInt)
+  }
+
 }

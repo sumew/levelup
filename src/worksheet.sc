@@ -141,7 +141,6 @@ def hammingWeight( n: Int): Int = {
   }
 
   loop(n,0)
-
 }
 
-hammingWeight(7)
+
