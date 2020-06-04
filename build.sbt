@@ -2,7 +2,7 @@ name := "l33tcode"
 
 version := "0.1"
 
-scalaVersion := "2.12.7"
+scalaVersion := "2.13.2"
 
 enablePlugins(JmhPlugin)
 

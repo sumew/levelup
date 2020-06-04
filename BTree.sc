@@ -10,3 +10,5 @@ val ioC = inOrderC(Some(root), identity[Int])
 val posR = postOrder(Some(root), identity[Int])
 val posC = postOrderC(Some(root),identity[Int])
 
+
+val tt = "scala"
