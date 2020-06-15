@@ -2,26 +2,33 @@ import scala.reflect.ClassTag
 
 type Matrix[T] = Array[Array[T]]
 
-def Matrix[T: ClassTag](rows: Int, cols: Int, value: T) = Array.fill[T](rows, cols)(value)
+def Matrix[T: ClassTag](rows: Int, cols: Int, value: T) =
+  Array.fill[T](rows, cols)(value)
 
-case class State(minimum: Int, k: Int)
+case class State(minimum: Int, k: Int) {
+  override def toString = s"$minimum:$k"
+}
 
-def bottomUp(input: Array[Matrix[Int]]): Matrix[State] = {
+def printMatrix[T](matrix: Matrix[T]) = {
+  (0 until matrix.length).foreach(i => println(matrix(i).mkString(" ")))
+}
 
-  val p = input.map(matrix => matrix.length).appended(input(input.length - 1)(0).length)
-  val n = input.length
+def bottomUp(p: Array[Int]): Matrix[State] = {
+
+  val n = p.length - 1
 
   def minProducts(): Matrix[State] = {
 
     val m = Matrix[State](n, n, State(Int.MaxValue, -1))
 
-    (0 until input.length).foreach { idx => m(idx)(idx) = State(minimum = 0, k = 0) }
+    (0 until n).foreach { idx => m(idx)(idx) = State(minimum = 0, k = 0) }
 
     for (l <- 2 to n)
       for (a <- 0 to n - l) {
         val b = a + l - 1
         for (k <- a until b) {
-          val mab = m(a)(k).minimum + m(k + 1)(b).minimum + p(a) * p(k + 1) * p(b + 1)
+          val mab =
+            m(a)(k).minimum + m(k + 1)(b).minimum + p(a) * p(k + 1) * p(b + 1)
           if (mab < m(a)(b).minimum)
             m(a)(b) = State(mab, k)
         }
@@ -34,25 +41,22 @@ def bottomUp(input: Array[Matrix[Int]]): Matrix[State] = {
 
 }
 
-val m = bottomUp(Array(Matrix(30, 35, 0), Matrix(35, 15, 0), Matrix(15, 5, 0), Matrix(5, 10, 0), Matrix(10, 20, 0), Matrix(20, 25, 0)))
-val min = m(0)(5)
+def parenthesize(input: Array[Int]): String = {
 
-def parens(m: Matrix[State]): String = {
+  val n = input.length - 1
+  val m = bottomUp(input)
 
-  def loop(range: Range): String = (m(range.start)(range.end).k, range.length) match {
-    case (_, 0)                     => s"A${range.start}"
-    case (k, _) if k == range.start => s"${Array.fill(range.length)("A").zip(range).map { case (a, b) => s"$a$b" }.mkString("")}"
-    case (k, l) => {
-
-      val (left, right) = range.splitAt(k)
-      println(s"range: $range, length: $l, k: $k")
-
-      s"(${loop(left)})(${loop(right)})"
-    }
-
+  def loop(begin: Int, end: Int): String = ((end - begin), m(begin)(end).k) match {
+    case (0, _) => s"A${begin}" //{s"(${input(begin)} * ${input(begin + 1)})"
+    case (_, k) => s"(${loop(begin, k)}${loop(k + 1, end)})" // s"(${loop(begin, m(begin)(end).k)} * ${loop(m(begin)(end).k + 1, end)})"
   }
-  loop(0 to m.length - 1)
+  loop(0, n - 1)
 
 }
 
-parens(m)
+val p = Array(30, 35, 15, 5, 10, 20, 25)
+parenthesize(p)
+
+val pp = Array(5, 10, 3, 12, 5, 50, 6)
+
+parenthesize(pp)
